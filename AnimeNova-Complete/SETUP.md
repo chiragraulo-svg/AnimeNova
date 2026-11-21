@@ -1,48 +1,49 @@
-# AnimeNova Complete Admin Edition
+# AnimeNova — Supabase-connected edition
 
-This package expands the supplied static AnimeNova prototype with a full admin interface and a Supabase production database starter.
+## Included
 
-## What is included
+- Supabase JS v2 client configured with the project URL and publishable key you supplied.
+- Supabase Auth email/password sign-up, sign-in and sign-out.
+- Admin-only dashboard visibility and client-side checks, backed by database Row Level Security (RLS).
+- Cloud catalogue reads and anime create/update/delete.
+- Cloud episode reads and create/delete.
+- Poster upload to the `anime-media` Storage bucket.
+- Cloud site settings and advertisement placements.
+- User profile list for admins (profile IDs are shown because the public `profiles` table intentionally does not expose email addresses).
 
-- Admin overview with live local-preview counts and recent catalogue entries
-- Anime catalogue CRUD, status, featured toggle, genre, year, type, score, poster, banner-ready data and official provider link
-- Episode manager with episode number, title, authorized video URL and WebVTT subtitle URL
-- Media library view for catalogue posters
-- Demo user directory view
-- Advertisement placement manager
-- Website name, accent colour, tagline, footer and maintenance-mode preview settings
-- Security/deployment status panel
-- JSON backup and restore
-- `supabase/schema.sql` with tables, Row Level Security policies, admin role helper, media bucket and admin bootstrap instructions
+## Required one-time Supabase setup
 
-## Run the local preview
+1. In Supabase Dashboard → SQL Editor, run `supabase/schema.sql`. If you already ran the same schema successfully, you do not need to run it again.
+2. In Authentication → Providers, enable Email sign-in.
+3. Deploy this folder to your website host (or open `index.html` locally for a basic test).
+4. In AnimeNova, choose **Sign in → Create account** and register your own account. Confirm the email if Supabase asks you to.
+5. In Supabase Dashboard → Authentication → Users, copy the UUID for your account.
+6. In SQL Editor, promote only your own account using the exact UUID:
 
-1. Extract this folder.
-2. Open `index.html` in a browser, or deploy the folder to Netlify.
-3. Click **Admin** in the top bar.
-4. All edits in this static preview are stored in the current browser's local storage. Use **Backup / restore** to export a JSON backup.
+```sql
+update public.profiles
+set role = 'admin'
+where id = 'PASTE-YOUR-AUTH-USER-UUID-HERE';
+```
 
-## Important: local preview is not production security
+7. Sign out and sign back in to refresh the profile role. The Admin button should then appear.
 
-The current website is a static HTML app. It does not yet authenticate administrators against Supabase or sync its browser data to the cloud. The dashboard's Security panel explains this state. Do not use real passwords in the demo account form, and do not publish private user information.
+## Important security notes
 
-## Set up Supabase for production
+- The browser contains only the Supabase publishable key. This key is intended for public client apps; RLS is what protects database records.
+- Never add a `service_role` key, secret API key, database password, or personal account password to this repository.
+- The SQL bootstrap step is required to grant admin access. New sign-ups are ordinary users and cannot promote themselves.
+- Keep RLS enabled. Do not add broad anonymous write policies.
+- The `anime-media` bucket allows public reads of images and admin-only uploads/updates/deletes. Do not upload private documents.
+- Episode video URLs must point to media you own or are licensed/authorized to distribute. Otherwise, use the official viewing link.
 
-1. Create a Supabase project.
-2. In the Supabase SQL Editor, run `supabase/schema.sql`.
-3. Enable the sign-in method(s) you intend to support in **Authentication → Providers**.
-4. Create your own account through Supabase Auth.
-5. Open **Authentication → Users**, copy your user UUID, and run the admin bootstrap `UPDATE public.profiles ...` statement at the bottom of `supabase/schema.sql` with your UUID.
-6. Verify that a normal account cannot insert, update or delete catalogue rows, while the admin account can.
-7. Connect the frontend to Supabase using the project's URL and **anon/public key** only. Keep the service-role key on a trusted server or serverless function; never place it in `index.html`, GitHub, or a public environment variable.
-8. Migrate local catalogue entries using the JSON backup as a source, then upload posters to the `anime-media` bucket and store their public URLs in the `poster_url` / `banner_url` columns.
+## Data notes
 
-The SQL schema is a backend foundation, not a completed frontend-to-cloud integration. A developer still needs to wire Supabase Auth, queries, uploads and realtime updates into the frontend before shared accounts and cross-device admin edits work.
+- Cloud catalogue starts empty unless you add records or migrate your existing local backup. The earlier sample titles are not automatically inserted into Supabase.
+- Existing localStorage data remains in that browser as a backup but is no longer the source of truth once cloud loading succeeds.
+- The user directory lists profile display names, role and UUID; retrieving Auth email addresses requires a trusted server-side admin API, not a browser key.
+- Supabase email confirmation settings and redirect URLs may need configuration for your deployed domain under Authentication → URL Configuration.
 
-## Authorized video and copyright
+## Deploy
 
-Only add video files and subtitle tracks that you own or are licensed/authorized to distribute. For other titles, use the official provider's viewing page. This project does not scrape websites, bypass access controls, or host unauthorized streams.
-
-## Deploy to Netlify
-
-Deploy the `AnimeNova-Complete` folder (the one containing `index.html` and `netlify.toml`) to your Netlify site. Test the deployed copy before replacing a live production deployment.
+Deploy the contents of `AnimeNova-Complete/` (the directory containing `index.html` and `netlify.toml`) to Netlify or another static host.
