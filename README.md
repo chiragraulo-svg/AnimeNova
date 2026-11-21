@@ -1,4 +1,4 @@
-[README.md](https://github.com/user-attachments/files/35203966/README.md)
+[README.md](https://github.com/user-attachments/files/35204173/README.md)
 # AnimeNova
 
 AnimeNova is a dark-purple anime catalogue prototype with a Supabase-connected admin dashboard.
@@ -22,7 +22,11 @@ The viewing page includes a responsive purple-neon player interface with:
 - Playback speed selection (0.75×–2×)
 - WebVTT subtitle toggle when a subtitle track is supplied
 - Fullscreen, previous/next episode navigation and an episode rail
-- Local resume position saved in the current browser
+- Resume position saved in the browser for signed-out visitors and synced to the signed-in account through Supabase
 - Keyboard shortcuts while the player page is open: Space (play/pause), ←/→ (seek 10 seconds), M (mute)
 
 The player does not include video content. Add only video URLs that you own or are authorized to distribute. Browser playback depends on the source format (commonly MP4/H.264) and the video host's CORS configuration. WebVTT subtitle files must also be reachable by the browser.
+
+
+### Player upgrade
+Run `supabase/migrations/20261121_player_progress_and_seasons.sql` on your existing Supabase project before deploying this version. It enables season-aware episode ordering and account-synced Continue Watching. The homepage shows recent unfinished episodes with progress bars; signed-in progress is protected by user-specific RLS.
