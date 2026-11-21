@@ -1,0 +1,5 @@
+AnimeNova Complete UX Upgrade
+Build date: 2026-11-21
+Base: AnimeNova-Continue-Watching-Season-Upgrade
+Includes: My Space, profile display-name editing, saved watchlist/favourites, account watch history view, responsive UI polish, reduced-motion support, keyboard focus styling, back-to-top button, and Supabase migration.
+Content policy: add only media you own or are authorized to distribute. For other titles, provide official viewing links. This project does not scrape or proxy third-party streams.

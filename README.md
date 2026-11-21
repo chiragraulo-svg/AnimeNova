@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/35204173/README.md)
 # AnimeNova
 
 AnimeNova is a dark-purple anime catalogue prototype with a Supabase-connected admin dashboard.
@@ -30,3 +29,15 @@ The player does not include video content. Add only video URLs that you own or a
 
 ### Player upgrade
 Run `supabase/migrations/20261121_player_progress_and_seasons.sql` on your existing Supabase project before deploying this version. It enables season-aware episode ordering and account-synced Continue Watching. The homepage shows recent unfinished episodes with progress bars; signed-in progress is protected by user-specific RLS.
+
+## My Space + UI upgrade
+
+- My Space profile view with display-name editing.
+- Account-synced watchlist and favourites via `saved_anime`.
+- Signed-in viewing history based on private watch progress.
+- Responsive polish, keyboard focus states, reduced-motion support and back-to-top control.
+- Run `supabase/migrations/20261121_my_space_and_saved_anime.sql` on an existing project after the player-progress migration.
+
+## Video hosting note
+
+The current admin episode manager stores an authorized video URL and optional WebVTT subtitle URL; it does not upload video files to Supabase Storage. The configured Storage bucket is for poster artwork only. Use a video host/storage service for media you own or are licensed to distribute, then paste its browser-playable URL. For titles without distribution rights, use the official viewing link.
